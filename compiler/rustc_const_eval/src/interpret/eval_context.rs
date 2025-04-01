@@ -23,14 +23,14 @@ use super::{
 };
 use crate::{ReportErrorExt, fluent_generated as fluent, util};
 
-// // TODO: THIS SUCKS
+// // FIXME: THIS SUCKS
 // pub struct FunctionCallChecker {
 //     pub n_static: i64,
 //     pub n_dynamic: i64,
 //     pub n_inst: i64,
 //     pub n_stable_inst: i64,
 //     pub is_stable_inst: bool,
-//     // TODO: CAN SAVE TYPE INFO OF PREV ARGS (BEFORE EVAL) by finding FnArg.layout which comes with type info
+//     // FIXME: THIS SUCKS CAN SAVE TYPE INFO OF PREV ARGS (BEFORE EVAL) by finding FnArg.layout which comes with type info
 // }
 
 pub struct InterpCx<'tcx, M: Machine<'tcx>> {
@@ -53,8 +53,7 @@ pub struct InterpCx<'tcx, M: Machine<'tcx>> {
 
     /// The recursion limit (cached from `tcx.recursion_limit(())`)
     pub recursion_limit: Limit,
-
-    // TODO: REMOVE THIS
+    // FIXME: THIS SUCKS REMOVE THIS
     // pub function_call_checker: FunctionCallChecker,
 }
 
@@ -212,7 +211,7 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
             typing_env,
             memory: Memory::new(),
             recursion_limit: tcx.recursion_limit(),
-            // TODO: REMOVE THIS
+            // FIXME: THIS SUCKS REMOVE THIS
             // function_call_checker: FunctionCallChecker { n_static: 0, n_dynamic: 0, n_inst: 0, n_stable_inst: 0, is_stable_inst: true },
         }
     }

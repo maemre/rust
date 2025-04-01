@@ -28,7 +28,7 @@ struct EvaluatedCalleeAndArgs<'tcx, M: Machine<'tcx>> {
 }
 
 // struct Analysis {
-    
+
 // }
 
 impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
@@ -39,8 +39,6 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
     /// This is marked `#inline(always)` to work around adversarial codegen when `opt-level = 3`
     #[inline(always)]
     pub fn step(&mut self) -> InterpResult<'tcx, bool> {
-
-
         if self.stack().is_empty() {
             return interp_ok(false);
         }
@@ -75,7 +73,7 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
         }
         interp_ok(true)
 
-        // TODO: Add a field to keep necessary info maybe
+        // FIXME: THIS SUCKS Add a field to keep necessary info maybe
     }
 
     /// Runs the interpretation logic for the given `mir::Statement` at the current frame and
@@ -541,7 +539,7 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
                 let EvaluatedCalleeAndArgs { callee, args, fn_sig, fn_abi, with_caller_location } =
                     self.eval_callee_and_args(terminator, func, args)?;
 
-                    // TODO: insn -> callee, check if changed
+                //FIXME: THIS SUCKS insn -> callee, check if changed
 
                 self.init_fn_tail_call(callee, (fn_sig.abi, fn_abi), &args, with_caller_location)?;
 
