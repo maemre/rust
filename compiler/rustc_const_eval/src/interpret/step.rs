@@ -27,6 +27,10 @@ struct EvaluatedCalleeAndArgs<'tcx, M: Machine<'tcx>> {
     with_caller_location: bool,
 }
 
+// struct Analysis {
+    
+// }
+
 impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
     /// Returns `true` as long as there are more things to do.
     ///
@@ -35,6 +39,8 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
     /// This is marked `#inline(always)` to work around adversarial codegen when `opt-level = 3`
     #[inline(always)]
     pub fn step(&mut self) -> InterpResult<'tcx, bool> {
+
+
         if self.stack().is_empty() {
             return interp_ok(false);
         }
@@ -68,6 +74,8 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
             }
         }
         interp_ok(true)
+
+        // TODO: Add a field to keep necessary info maybe
     }
 
     /// Runs the interpretation logic for the given `mir::Statement` at the current frame and
@@ -416,6 +424,8 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
 
     /// Shared part of `Call` and `TailCall` implementation — finding and evaluating all the
     /// necessary information about callee and arguments to make a call.
+    // #[instrument(level = "info", skip(self, terminator, func))]
+    #[instrument(level = "info", skip(self, terminator, func))]
     fn eval_callee_and_args(
         &self,
         terminator: &mir::Terminator<'tcx>,
@@ -452,6 +462,8 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
                 span_bug!(terminator.source_info.span, "invalid callee of type {}", func.layout.ty)
             }
         };
+
+        tracing::info!("HI: {}", 1);
 
         interp_ok(EvaluatedCalleeAndArgs { callee, args, fn_sig, fn_abi, with_caller_location })
     }
@@ -528,6 +540,8 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
 
                 let EvaluatedCalleeAndArgs { callee, args, fn_sig, fn_abi, with_caller_location } =
                     self.eval_callee_and_args(terminator, func, args)?;
+
+                    // TODO: insn -> callee, check if changed
 
                 self.init_fn_tail_call(callee, (fn_sig.abi, fn_abi), &args, with_caller_location)?;
 
