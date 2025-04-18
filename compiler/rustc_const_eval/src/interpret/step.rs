@@ -516,6 +516,12 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
                 let EvaluatedCalleeAndArgs { callee, args, fn_sig, fn_abi, with_caller_location } =
                     self.eval_callee_and_args(terminator, func, args)?;
 
+                info!(
+                    target: "tracer",
+                    "{{\"calling_fn\": \"{:?}\", \"args\": \"{:?}\", \"fn_sig\": \"{:?}\", \"fn_abi\": \"{:?}\", \"with_caller_location\": \"{:?}\"}}",
+                    callee, args, fn_sig, fn_abi, with_caller_location
+                );
+
                 let destination = self.force_allocation(&self.eval_place(destination)?)?;
                 self.init_fn_call(
                     callee,
@@ -539,7 +545,15 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
                 let EvaluatedCalleeAndArgs { callee, args, fn_sig, fn_abi, with_caller_location } =
                     self.eval_callee_and_args(terminator, func, args)?;
 
+<<<<<<< Updated upstream
                 //FIXME: THIS SUCKS insn -> callee, check if changed
+=======
+                info!(
+                    target: "tracer",
+                    "{{\"calling_fn\": \"{:?}\", \"args\": \"{:?}\", \"fn_sig\": \"{:?}\", \"fn_abi\": \"{:?}\", \"with_caller_location\": \"{:?}\"}}",
+                    callee, args, fn_sig, fn_abi, with_caller_location
+                );
+>>>>>>> Stashed changes
 
                 self.init_fn_tail_call(callee, (fn_sig.abi, fn_abi), &args, with_caller_location)?;
 
