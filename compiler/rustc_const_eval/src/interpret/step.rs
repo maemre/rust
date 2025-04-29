@@ -5,6 +5,7 @@
 use either::Either;
 use rustc_abi::{FIRST_VARIANT, FieldIdx};
 use rustc_index::IndexSlice;
+use rustc_macros::{Decodable, Encodable, TyDecodable, TyEncodable};
 use rustc_middle::ty::layout::FnAbiOf;
 use rustc_middle::ty::{self, Instance, Ty};
 use rustc_middle::{bug, mir, span_bug};
@@ -27,9 +28,13 @@ struct EvaluatedCalleeAndArgs<'tcx, M: Machine<'tcx>> {
     with_caller_location: bool,
 }
 
-// struct Analysis {
-
-// }
+#[derive(Encodable, Decodable, TyEncodable, TyDecodable)]
+struct PleasePrint<'tcx, M: Machine<'tcx>> {
+    callee: FnVal<'tcx, M::ExtraFnVal>,
+    fn_sig: ty::FnSig<'tcx>,
+    /// True if the function is marked as `#[track_caller]` ([`ty::InstanceKind::requires_caller_location`])
+    with_caller_location: bool,
+}
 
 impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
     /// Returns `true` as long as there are more things to do.
@@ -545,15 +550,11 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
                 let EvaluatedCalleeAndArgs { callee, args, fn_sig, fn_abi, with_caller_location } =
                     self.eval_callee_and_args(terminator, func, args)?;
 
-<<<<<<< Updated upstream
-                //FIXME: THIS SUCKS insn -> callee, check if changed
-=======
                 info!(
                     target: "tracer",
                     "{{\"calling_fn\": \"{:?}\", \"args\": \"{:?}\", \"fn_sig\": \"{:?}\", \"fn_abi\": \"{:?}\", \"with_caller_location\": \"{:?}\"}}",
                     callee, args, fn_sig, fn_abi, with_caller_location
                 );
->>>>>>> Stashed changes
 
                 self.init_fn_tail_call(callee, (fn_sig.abi, fn_abi), &args, with_caller_location)?;
 
