@@ -5,7 +5,6 @@
 use either::Either;
 use rustc_abi::{FIRST_VARIANT, FieldIdx};
 use rustc_index::IndexSlice;
-use rustc_macros::{Decodable, Encodable, TyDecodable, TyEncodable};
 use rustc_middle::ty::layout::FnAbiOf;
 use rustc_middle::ty::{self, Instance, Ty};
 use rustc_middle::{bug, mir, span_bug};
@@ -24,14 +23,6 @@ struct EvaluatedCalleeAndArgs<'tcx, M: Machine<'tcx>> {
     args: Vec<FnArg<'tcx, M::Provenance>>,
     fn_sig: ty::FnSig<'tcx>,
     fn_abi: &'tcx FnAbi<'tcx, Ty<'tcx>>,
-    /// True if the function is marked as `#[track_caller]` ([`ty::InstanceKind::requires_caller_location`])
-    with_caller_location: bool,
-}
-
-#[derive(Encodable, Decodable, TyEncodable, TyDecodable)]
-struct PleasePrint<'tcx, M: Machine<'tcx>> {
-    callee: FnVal<'tcx, M::ExtraFnVal>,
-    fn_sig: ty::FnSig<'tcx>,
     /// True if the function is marked as `#[track_caller]` ([`ty::InstanceKind::requires_caller_location`])
     with_caller_location: bool,
 }
@@ -465,8 +456,6 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
                 span_bug!(terminator.source_info.span, "invalid callee of type {}", func.layout.ty)
             }
         };
-
-        tracing::info!("HI: {}", 1);
 
         interp_ok(EvaluatedCalleeAndArgs { callee, args, fn_sig, fn_abi, with_caller_location })
     }
