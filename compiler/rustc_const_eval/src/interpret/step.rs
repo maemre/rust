@@ -61,15 +61,28 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
         M::before_terminator(self)?;
 
         let terminator = basic_block.terminator();
+
         self.eval_terminator(terminator)?;
+
+        match terminator.kind {
+            // Print bb only if fn call
+            // FIXME: Does this even work? D:
+            mir::TerminatorKind::Call { .. } | mir::TerminatorKind::TailCall { .. } => {
+                info!(
+                    target: "mir_tracer",
+                    "{{\"bb_id\": \"{:?}\"}}",
+                    loc.block,
+                );
+            }
+            _ => (),
+        };
+
         if !self.stack().is_empty() {
-            if let Either::Left(loc) = self.frame().loc {
-                info!("// executing {:?}", loc.block);
+            if let Either::Left(_loc) = self.frame().loc {
+                // info!("// executing {:?}", loc.block);
             }
         }
         interp_ok(true)
-
-        // FIXME: THIS SUCKS Add a field to keep necessary info maybe
     }
 
     /// Runs the interpretation logic for the given `mir::Statement` at the current frame and
@@ -511,7 +524,7 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
                     self.eval_callee_and_args(terminator, func, args)?;
 
                 info!(
-                    target: "tracer",
+                    target: "mir_tracer",
                     "{{\"calling_fn\": \"{:?}\", \"args\": \"{:?}\", \"fn_sig\": \"{:?}\", \"fn_abi\": \"{:?}\", \"with_caller_location\": \"{:?}\"}}",
                     callee, args, fn_sig, fn_abi, with_caller_location
                 );
@@ -540,7 +553,7 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
                     self.eval_callee_and_args(terminator, func, args)?;
 
                 info!(
-                    target: "tracer",
+                    target: "mir_tracer",
                     "{{\"calling_fn\": \"{:?}\", \"args\": \"{:?}\", \"fn_sig\": \"{:?}\", \"fn_abi\": \"{:?}\", \"with_caller_location\": \"{:?}\"}}",
                     callee, args, fn_sig, fn_abi, with_caller_location
                 );
