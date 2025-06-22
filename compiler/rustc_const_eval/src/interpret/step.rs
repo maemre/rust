@@ -62,20 +62,32 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
 
         let terminator = basic_block.terminator();
 
+        // match terminator.kind {
+        //     // Print bb only if fn call
+        //     // FIXME: Does this even work? D:
+        //     mir::TerminatorKind::Call { .. } | mir::TerminatorKind::TailCall { .. } => {
+        //         info!(
+        //             target: "call_info",
+        //             "{{\"bb_id\": \"{:?}\"}}",
+        //             loc.block,
+        //         );
+        //     }
+        //     _ => {
+        //         info!(
+        //             target: "call_info",
+        //             "{{\"kind\": \"{:?}\"}}",
+        //             terminator.kind,
+        //         );
+        //     },
+        // };
+
         self.eval_terminator(terminator)?;
 
-        match terminator.kind {
-            // Print bb only if fn call
-            // FIXME: Does this even work? D:
-            mir::TerminatorKind::Call { .. } | mir::TerminatorKind::TailCall { .. } => {
-                info!(
-                    target: "mir_tracer",
-                    "{{\"bb_id\": \"{:?}\"}}",
-                    loc.block,
-                );
-            }
-            _ => (),
-        };
+        info!(
+            target: "call_info",
+            "{{\"bb_id\": \"{:?}\", \"term_kind\": \"{:?}\"}}",
+            loc.block, terminator.kind,
+        );
 
         if !self.stack().is_empty() {
             if let Either::Left(_loc) = self.frame().loc {
@@ -524,7 +536,7 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
                     self.eval_callee_and_args(terminator, func, args)?;
 
                 info!(
-                    target: "mir_tracer",
+                    target: "call_info",
                     "{{\"calling_fn\": \"{:?}\", \"args\": \"{:?}\", \"fn_sig\": \"{:?}\", \"fn_abi\": \"{:?}\", \"with_caller_location\": \"{:?}\"}}",
                     callee, args, fn_sig, fn_abi, with_caller_location
                 );
@@ -553,7 +565,7 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
                     self.eval_callee_and_args(terminator, func, args)?;
 
                 info!(
-                    target: "mir_tracer",
+                    target: "call_info",
                     "{{\"calling_fn\": \"{:?}\", \"args\": \"{:?}\", \"fn_sig\": \"{:?}\", \"fn_abi\": \"{:?}\", \"with_caller_location\": \"{:?}\"}}",
                     callee, args, fn_sig, fn_abi, with_caller_location
                 );
