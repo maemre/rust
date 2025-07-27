@@ -62,25 +62,6 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
 
         let terminator = basic_block.terminator();
 
-        // match terminator.kind {
-        //     // Print bb only if fn call
-        //     // FIXME: Does this even work? D:
-        //     mir::TerminatorKind::Call { .. } | mir::TerminatorKind::TailCall { .. } => {
-        //         info!(
-        //             target: "call_info",
-        //             "{{\"bb_id\": \"{:?}\"}}",
-        //             loc.block,
-        //         );
-        //     }
-        //     _ => {
-        //         info!(
-        //             target: "call_info",
-        //             "{{\"kind\": \"{:?}\"}}",
-        //             terminator.kind,
-        //         );
-        //     },
-        // };
-
         self.eval_terminator(terminator)?;
 
         info!(
@@ -443,8 +424,6 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
 
     /// Shared part of `Call` and `TailCall` implementation — finding and evaluating all the
     /// necessary information about callee and arguments to make a call.
-    // #[instrument(level = "info", skip(self, terminator, func))]
-    #[instrument(level = "info", skip(self, terminator, func))]
     fn eval_callee_and_args(
         &self,
         terminator: &mir::Terminator<'tcx>,
